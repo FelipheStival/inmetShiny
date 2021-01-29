@@ -1,0 +1,43 @@
+#==================================================================
+# Metodo para abrir a conexao com o banco de dados
+#
+# @return objeto connection com conexao do banco de dados
+#==================================================================
+banco.provider.openConnection = function(){
+  connection = dbConnect(
+    DB_DRIVER,
+    dbname = DB_DATABASE,
+    host = DB_HOST,
+    port = DB_PORT,
+    user = DB_USERNAME,
+    password = DB_PASSWORD,
+  )
+  return(connection)
+}
+
+#==================================================================
+# Metodo para executar um statement
+#
+# @return objeto connection com conexao do banco de dados
+#==================================================================
+banco.provider.executeQuery = function(statement){
+  connection = banco.provider.openConnection()
+  result = set_utf8(dbGetQuery(connection,statement))
+  dbDisconnect(connection)
+  return(result)
+}
+
+#==================================================================
+# converter caracteres para UTF-8
+#
+# @param x objeto string a ser convertido
+# @return x ojeto convetido para utf-8
+#==================================================================
+set_utf8 = function(x) {
+  # Declare UTF-8 encoding on all character columns:
+  chr <- sapply(x, is.character)
+  x[, chr] <- lapply(x[, chr, drop = FALSE], `Encoding<-`, "UTF-8")
+  # Same on column names:
+  Encoding(names(x)) <- "UTF-8"
+  x
+}
