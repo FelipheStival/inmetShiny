@@ -15,6 +15,7 @@
       sidebarMenu(
          itemMenuMapa(),
          itemMenuAnalise(),
+         itemMenuTabela(),
          itemMenuGraficos(),
          itemFiltroUI()
       )
@@ -33,7 +34,8 @@
          createMapaMatrizUI(),
          createPrecipitacaoUI(),
          createPrecipitacaoCumulativaUI(),
-         createPeriodoChuvosoUI()
+         createPeriodoChuvosoUI(),
+         createTabelaUI()
       )
    )
    

@@ -14,8 +14,19 @@ mapaServer = function(input, output, session, conexao) {
   })
   
   output$mapaEstacoes = renderLeaflet({
-    if(input$estadoInput != ""){
-      mapaChart(dadosMapa()) 
+    if (input$estadoInput != "") {
+      mapaChart(dadosMapa())
+    }
+  })
+  
+  #Evento click mapa
+  observe({
+    if (!is.null(input$mapaEstacoes_marker_click$id)) {
+      updateSelectInput(
+        session = session,
+        inputId = "cidadeInput",
+        selected = input$mapaEstacoes_marker_click$id
+      )
     }
   })
 }

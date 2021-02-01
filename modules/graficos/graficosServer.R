@@ -7,9 +7,13 @@
 # @data objeto do tipo data.frame com dados das estacoes
 #==================================================================
 graficosServer = function(input, output, session) {
+  
   # Dados graficos
   dadosGraficos = reactive({
-    dados = graficos.provider.dados(input$stationInput)
+    dados = graficos.provider.dados(input$cidadeInput,
+                                    input$periodoInput[1],
+                                    input$periodoInput[2]
+                                    )
     return(dados)
   })
   

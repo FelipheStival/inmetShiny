@@ -23,4 +23,7 @@ server = shinyServer(function(input, output, session) {
   # Graficos server
   graficosServer(input,output,session)
   
+  # Tabela server
+  tabelaServer(input,output,session)
+  
 })

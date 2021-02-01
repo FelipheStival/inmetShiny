@@ -24,7 +24,7 @@ mapaChart = function(coords){
                                latitude,"<br>","<strong>Long: </strong>:",
                                longitude),
                clusterOptions = markerClusterOptions()
-               ,layerId = ~id_estacao) %>%
+               ,layerId = ~municipio) %>%
     
     #adicionando opcoes de tiras
     addProviderTiles(provider = "OpenTopoMap",

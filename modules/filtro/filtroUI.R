@@ -15,10 +15,11 @@ itemFiltroUI = function() {
       label = "Selecione a cidade: ",
       choices = NULL
     ),
-    selectInput(
-      inputId = "stationInput",
-      label = "Selecione a estacao:",
-      choices = NULL
+    dateRangeInput(
+      inputId = "periodoInput",
+      label = "Selecione o periodo:",
+      start = Sys.Date(),
+      end = Sys.Date()
     )
   )
   

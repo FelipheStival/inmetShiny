@@ -7,6 +7,7 @@
 # @conexao conexao com banco de dados
 #==================================================================
 filtroServer = function(input, output, session) {
+  
   #Atualizando estados
   observe({
     estados = filtro.provider.obterEstados(conexao)
@@ -31,17 +32,16 @@ filtroServer = function(input, output, session) {
     }
   })
   
-  #Atualizado estacoes
+  #Atualizando periodo
   observe({
-    if (input$cidadeInput != "") {
-      estacoes = filtro.provider.obterEstacao(input$cidadeInput, conexao)
-      updateSelectInput(
+    if(input$cidadeInput != ""){
+      periodo = filtro.provider.obterPeriodo(input$cidadeInput, conexao)
+      updateDateRangeInput(
         session = session,
-        inputId = "stationInput",
-        choices = estacoes$code,
-        selected = estacoes$code[1]
+        inputId = "periodoInput",
+        start = periodo$comeco,
+        end = periodo$fim
       )
     }
   })
-  
 }

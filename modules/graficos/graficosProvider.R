@@ -4,11 +4,9 @@
 # @param conexao conexao com banco de dados
 # @return data.frame com dados dos estados
 #==================================================================
-graficos.provider.dados = function(estacao) {
-  statement = sprintf(
-    "SELECT inmet_daily_data.id,
-     station.code,
-     inmet_daily_data.station_id,
+graficos.provider.dados = function(municipio,startDate,endDate) {
+  statement = sprintf("SELECT inmet_daily_data.id,
+       inmet_daily_data.station_id,
 	   inmet_daily_data.measurement_date,
 	   inmet_daily_data.minimum_temperature,
 	   inmet_daily_data.maximum_temperature,
@@ -23,12 +21,14 @@ graficos.provider.dados = function(estacao) {
 	   inmet_daily_data.rain
 	FROM public.inmet_daily_data
 	INNER JOIN station ON inmet_daily_data.station_id = station.id
-	WHERE station.code = '%s'
-	ORDER BY inmet_daily_data.measurement_date",
-    estacao
-  )
+	INNER JOIN city ON station.city_id = city.id
+	WHERE city.name = '%s'
+	AND
+	inmet_daily_data.measurement_date >= '%s'
+	AND 
+	inmet_daily_data.measurement_date <= '%s'",municipio,startDate,endDate)
   dados = banco.provider.executeQuery(statement)
-  colnames(dados)[4] = "data"
+  colnames(dados)[3] = "data"
   return(dados)
 }
 
