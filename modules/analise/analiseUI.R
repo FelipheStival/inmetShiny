@@ -4,8 +4,12 @@
 createAnaliseUI = function() {
   #criando janela
   tabItem(tabName = "analiseUI",
-          box(width = 12,
-              dataTableOutput("tabelaSumario")))
+          tabBox(width = "100%",
+                 tabPanel(
+                   "Analise",
+                   withSpinner(dataTableOutput("tabelaSumario")),
+                   downloadButton("DownloadSumario", label = "Download")
+                 )))
 }
 
 #==================================================================

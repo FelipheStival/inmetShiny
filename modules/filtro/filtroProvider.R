@@ -19,7 +19,7 @@ filtro.provider.obterEstados = function(conexao) {
 #==================================================================
 filtro.provider.obterCidades = function(estado, conexao) {
   statement = sprintf(
-  "SELECT city. name as municipio
+    "SELECT city. name as municipio
 	FROM public.city
 	INNER JOIN state ON city.state_id = state.id
 	WHERE state.name = '%s'",
@@ -57,13 +57,16 @@ filtro.provider.obterEstacao = function(municipio, conexao) {
 # @return data.frame com periodo de datas
 #==================================================================
 filtro.provider.obterPeriodo = function(municipio, conexao) {
-  statement = sprintf("SELECT 
+  statement = sprintf(
+    "SELECT
                       min(inmet_daily_data.measurement_date) as comeco,
                       max(inmet_daily_data.measurement_date) as fim
                       FROM public.inmet_daily_data
                       INNER JOIN station ON inmet_daily_data.station_id = station.id
 					            INNER JOIN city ON station.city_id = city.id
-                      WHERE city.name = '%s'",municipio)
+                      WHERE city.name = '%s'",
+    municipio
+  )
   periodo = banco.provider.executeQuery(statement)
   return(periodo)
 }

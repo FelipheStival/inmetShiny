@@ -1,7 +1,8 @@
 
+
 #==============================================#
 # Carregando pacotes a serem utilizados
-app.LoadPackages = function() 
+app.LoadPackages = function()
 {
   #=============================================#
   # Iniciando bibliotecas web
@@ -15,6 +16,8 @@ app.LoadPackages = function()
   require(shinycssloaders)
   require(seas)
   require(reshape2)
+  require(DT)
+  require(superheat)
   
   #==============================================#
   
@@ -25,10 +28,11 @@ app.LoadPackages = function()
 #==============================================#
 # Compilando arquivos
 app.CompileModules = function() {
-  
   require(compiler)
   
-  modulos = list.files(pattern = ".R$", recursive = T, full.names = T)
+  modulos = list.files(pattern = ".R$",
+                       recursive = T,
+                       full.names = T)
   app.index = grep("app.R", modulos)
   modulos = modulos[-app.index]
   
@@ -36,7 +40,7 @@ app.CompileModules = function() {
     m.out = strsplit(m.in, split = "\\.")[[1]]
     m.out[length(m.out)] = 'Rc'
     m.out = paste(m.out, collapse = ".")
-    cmpfile(m.in, m.out)     
+    cmpfile(m.in, m.out)
   })
 }
 #==============================================#
@@ -44,10 +48,11 @@ app.CompileModules = function() {
 #==============================================#
 # Carregando arquivos compilados
 app.LoadModules = function() {
-  
   require(compiler)
   
-  modulos = list.files(pattern = ".Rc$", recursive = T, full.names = T)
+  modulos = list.files(pattern = ".Rc$",
+                       recursive = T,
+                       full.names = T)
   log = sapply(modulos, loadcmp)
 }
 #==============================================#
@@ -55,7 +60,9 @@ app.LoadModules = function() {
 #==============================================#
 # Removendo arquivos compilados
 app.ResetModules = function() {
-  modulos = list.files(pattern = ".Rc$", recursive = T, full.names = T)
+  modulos = list.files(pattern = ".Rc$",
+                       recursive = T,
+                       full.names = T)
   log = sapply(modulos, unlink)
 }
 
@@ -68,4 +75,3 @@ app.CompileModules()
 app.LoadModules()
 
 shinyApp(ui, server)
-

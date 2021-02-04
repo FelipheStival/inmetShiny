@@ -26,7 +26,8 @@ tabelaServer = function(input, output, session) {
   # Dados diarios
   output$dadosDiariosTable = renderDataTable({
     dadosDiarios()
-  }, options = list(
+  }, class = "cell-border",
+  options = list(
     lengthMenu = c(5, 10, 15, 20),
     pageLength = 10,
     scrollX = TRUE
@@ -35,7 +36,8 @@ tabelaServer = function(input, output, session) {
   # Dados horarios
   output$dadosHorariosTable = renderDataTable({
     dadosHorarios()
-  }, options = list(
+  }, class = "cell-border",
+  options = list(
     lengthMenu = c(5, 10, 15, 20),
     pageLength = 10,
     scrollX = TRUE

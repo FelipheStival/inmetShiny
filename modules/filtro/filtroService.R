@@ -34,7 +34,7 @@ filtroServer = function(input, output, session) {
   
   #Atualizando periodo
   observe({
-    if(input$cidadeInput != ""){
+    if (input$cidadeInput != "") {
       periodo = filtro.provider.obterPeriodo(input$cidadeInput, conexao)
       updateDateRangeInput(
         session = session,

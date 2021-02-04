@@ -5,7 +5,8 @@
 # @return data.frame com dados dos estados
 #==================================================================
 graficos.chart.dadosPerdidos = function(dados) {
-  grafico = heatmaply_na(dados)
+  grafico =  ggplot(data = dados, aes(x = Variavel, y = Estacao)) + geom_tile(aes(fill = Valor), colour = "white") +
+    scale_fill_gradient(low = "#7cb342", high = "#e53935") + theme_minimal()
   return(grafico)
 }
 
@@ -83,6 +84,44 @@ grafico.precipitacao = function(dados, Municipio, Grupodias, Coluna)
   
 }
 
+#==================================================================
+# Metodo para criar o grafico boxplot
+#
+# @param conexao conexao com banco de dados
+# @return data.frame com dados dos estados
+#==================================================================
+grafico.boxplot = function(tabela,
+                           nomeEstacao,
+                           Grupodias,
+                           colunaVariavel,
+                           color,
+                           ylab)
+{
+  tabela$id = NULL
+  tabela[[colunaVariavel]] = as.numeric(tabela[[colunaVariavel]])
+  tabela$data = as.Date(tabela$data)
+  
+  Grupodias = ifelse(!is.na(as.numeric(Grupodias)), as.numeric(Grupodias), "mon")
+  year.max = format(max(tabela$data), "%Y")
+  year.min = format(min(tabela$data), "%Y")
+  
+  titulo = sprintf("Municipio '%s'\n %s - %s", nomeEstacao, year.min, year.max)
+  
+  indexData = which(names(tabela) == "data")
+  names(tabela)[indexData] = "date"
+  
+  seas.var.plot(
+    tabela,
+    var = colunaVariavel,
+    start = 1,
+    col = color,
+    ylog = FALSE,
+    width = Grupodias,
+    main = titulo,
+    ylab = ylab
+  ) + geom_boxplot(outlier.shape = NA)
+  
+}
 #======================================================================
 # Metodo para criar o grafico basico
 #
@@ -90,34 +129,70 @@ grafico.precipitacao = function(dados, Municipio, Grupodias, Coluna)
 # @param Municipio municipio selecionado
 # @param Coluna coluna selecionada
 #======================================================================
-grafico.precipitacaoAcumulada = function(dados, Municipio, Coluna)
+grafico.precipitacaoAcumulada = function(tabela, Municipio, Coluna)
 {
-  dados[[Coluna]] = as.numeric(dados[[Coluna]])
+  tabela[[Coluna]] = as.numeric(tabela[[Coluna]])
   
-  dados$data = as.Date(dados$data)
-  year.max = format(max(dados$data), "%Y")
-  year.min = format(min(dados$data), "%Y")
+  tabela$data = as.Date(tabela$data)
+  year.max = format(max(tabela$data), "%Y")
+  year.min = format(min(tabela$data), "%Y")
   
   titulo = sprintf("Municipio '%s'\n %s - %s", Municipio, year.min, year.max)
   
-  indexData = which(names(dados) %in% c("data", Coluna))
-  names(dados)[indexData] = c("date", "precip")
+  indexData = which(names(tabela) %in% c("data", Coluna))
+  names(tabela)[indexData] = c("date", "precip")
   
-  dados$rain = dados$precip
-  dados$id = NULL
-  dados$snow = 0
+  tabela$id = NULL
+  tabela$rain = tabela$precip
+  
+  tabela$snow = 0
   
   
-  s.s = seas.sum(dados, width = 10)
+  s.s = seas.sum(tabela, width = 10)
   s.n = precip.norm(s.s, fun = "mean")
   
-  dat.dep = precip.dep(dados, s.n)
+  dat.dep = precip.dep(tabela, s.n)
   
   plot(dep ~ date,
        dat.dep,
        type = "l",
        main = titulo,
-       ylab = "Precipitacao pluvial cumulativa (mm/dia)")
+       ylab = "Precipitacao cumulativa (mm)")
+  
+}
+
+#======================================================================
+# Metodo para criar o grafico seco e umido
+#
+# @param dados data.frame com dados do grafico
+# @param Municipio municipio selecionado
+# @param Coluna coluna selecionada
+#======================================================================
+grafico.diaSecoUmido = function(tabela,
+                                colunaPrecipitacao,
+                                Municipio,
+                                intervalo)
+{
+  tabela$id = NULL
+  tabela[[colunaPrecipitacao]] = as.numeric(tabela[[colunaPrecipitacao]])
+  
+  intervalo = ifelse(!is.na(as.numeric(intervalo)), as.numeric(intervalo), "mon")
+  tabela$data = as.Date(tabela$data)
+  year.max = format(max(tabela$data), "%Y")
+  year.min = format(min(tabela$data), "%Y")
+  
+  indexData = which(names(tabela) %in% c("data", colunaPrecipitacao))
+  names(tabela)[indexData] = c("date", "precip")
+  
+  titulo = sprintf("Municipio '%s'\n %s - %s", Municipio, year.min, year.max)
+  
+  d.w.table = interarrival(tabela, "precip")
+  
+  par(mfrow = c(1, 2))
+  plot(d.w.table,
+       width = intervalo,
+       start = 1,
+       main = titulo)
   
 }
 

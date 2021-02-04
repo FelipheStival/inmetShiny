@@ -6,7 +6,7 @@ createdadosPerdidosUI = function() {
   tabItem(tabName = "dadosPerdidosplot",
           box(width = 12,
               withSpinner(
-                plotlyOutput("dadosPerdidosPlot", width = "100%")
+                plotOutput("dadosPerdidosPlot", width = "100%", height = "85vh")
               )))
 }
 
@@ -22,8 +22,7 @@ createMapaMatrizUI = function() {
               inputId = "variavelSelect",
               label = "Selecione a variavel:",
               choices = c(
-                "Precipitacao minima(mm)" = "minimum_precipitation",
-                "Precipitacao maxima(mm)" = "maximum_precipitation",
+                "Precipitacao" = "rain",
                 "Temperatura maxima(*C)" = "maximum_temperature",
                 "Temperatura minima(*C)" = "minimum_temperature",
                 "Radiacao solar global(MJ/m2)" = "global_radiation",
@@ -92,7 +91,69 @@ createPeriodoChuvosoUI = function() {
               plotOutput("periodoChuvosoPlot")))
 }
 
+#==================================================================
+# grafico dia seco e umido
+#==================================================================
+createDiaSecoUmidoUI = function() {
+  #criando janela
+  tabItem(tabName = "diaSecoUmido",
+          box(
+            width = 4,
+            selectInput(
+              inputId = "secoUmidoGrupoDias",
+              label = "Selecione o grupo de dias:",
+              choices = c(
+                "10 dias" = 10,
+                "21 dias" = 21,
+                "Mensal" = "mon"
+              )
+            )
+          ),
+          box(width = 8,
+              plotOutput("secoUmidoPlot")))
+}
 
+
+#==================================================================
+# grafico Boxplot chuvoso UI
+#==================================================================
+createGraficoBasicoUI = function() {
+  #criando janela
+  tabItem(tabName = "graficosPerdidosPlot",
+          box(
+            width = 4,
+            selectInput(
+              inputId = "boxplotVariavel",
+              label = "Selecione a variavel:",
+              choices = c(
+                "Temperatura minima(*C)" = "minimum_temperature",
+                "Temperatura maxima(*C)" = "maximum_temperature",
+                "Umidade minima do ar(%)" = "minimum_relative_air_humidity",
+                "Umidade maxima do ar(%)" = "maximum_relative_air_humidity",
+                "Velocidade do Vento(%)" = "wind_speed",
+                "Radiacao solar global(MJ/m2)" = "global_radiation",
+                "Precipitacao(mm)" = "rain"
+              )
+            ),
+            selectInput(
+              inputId = "grupodiasBoxPlot",
+              label = "Selecione o grupo de dias:",
+              choices = c(
+                "10 Dias" = 10,
+                "21 Dias" = 21,
+                "Mensal" = "Mon"
+              )
+            )
+          ),
+          box(
+            width = 8,
+            plotOutput(
+              "graficosPerdidosPlot",
+              width = "100%",
+              height = "80vh"
+            )
+          ))
+}
 
 #==================================================================
 # Graficos menu item
@@ -103,8 +164,13 @@ itemMenuGraficos = function() {
     tabName = "analiseUI",
     icon = icon("line-chart"),
     menuSubItem(
-      text = "Dados peridos",
+      text = "Dados perdidos",
       tabName = "dadosPerdidosplot",
+      icon = icon("bar-chart")
+    ),
+    menuSubItem(
+      text = "Grafico basico",
+      tabName = "graficosPerdidosPlot",
       icon = icon("bar-chart")
     ),
     menuSubItem(
@@ -120,6 +186,11 @@ itemMenuGraficos = function() {
     menuSubItem(
       text = "Precipitacao cumulativa",
       tabName = "PrecipitacaoCumulativa",
+      icon = icon("bar-chart")
+    ),
+    menuSubItem(
+      text = "Dia seco e umido",
+      tabName = "diaSecoUmido",
       icon = icon("bar-chart")
     ),
     menuSubItem(

@@ -4,19 +4,20 @@
 createTabelaUI = function() {
   #criando janela
   tabItem(tabName = "tabelaTab",
-            tabBox(
-              width = "100%",
-              selected = "Dados diarios",
-              tabPanel("Dados diarios",
-                       withSpinner(dataTableOutput("dadosDiariosTable")),
-                       downloadButton("downloadDiarios","Download")
-                       ),
-              tabPanel("Dados horarios",
-                       withSpinner(dataTableOutput("dadosHorariosTable")),
-                       downloadButton("downloadHorarios","Download")
-                       )
+          tabBox(
+            width = "100%",
+            selected = "Dados diarios",
+            tabPanel(
+              "Dados diarios",
+              withSpinner(dataTableOutput("dadosDiariosTable")),
+              downloadButton("downloadDiarios", "Download")
+            ),
+            tabPanel(
+              "Dados horarios",
+              withSpinner(dataTableOutput("dadosHorariosTable")),
+              downloadButton("downloadHorarios", "Download")
             )
-  )
+          ))
   
 }
 

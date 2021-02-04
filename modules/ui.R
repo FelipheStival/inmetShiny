@@ -1,10 +1,10 @@
 
 
- ui = dashboardPage(
-    
+
+ui = dashboardPage(
    #========================header=========================
-    
-   dashboardHeader( title =  APP_NAME),
+   
+   dashboardHeader(title =  APP_NAME),
    
    #=======================================================
    
@@ -35,9 +35,11 @@
          createPrecipitacaoUI(),
          createPrecipitacaoCumulativaUI(),
          createPeriodoChuvosoUI(),
-         createTabelaUI()
+         createTabelaUI(),
+         createGraficoBasicoUI(),
+         createDiaSecoUmidoUI()
       )
    )
    
    #========================================================
- )
+)
