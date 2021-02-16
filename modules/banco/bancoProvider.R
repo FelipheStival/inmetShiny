@@ -3,15 +3,18 @@
 #
 # @return objeto connection com conexao do banco de dados
 #==================================================================
-banco.provider.openConnection = function(){
-  connection = dbConnect(
-    DB_DRIVER,
-    dbname = DB_DATABASE,
-    host = DB_HOST,
-    port = DB_PORT,
-    user = DB_USERNAME,
-    password = DB_PASSWORD,
-  )
+banco.provider.openConnection = function() {
+  connection = dbConnect(RSQLite::SQLite(),
+                         "inmet.db")
+  
+  #connection = dbConnect(
+  #DB_DRIVER,
+  #dbname = DB_DATABASE,
+  #host = DB_HOST,
+  #port = DB_PORT,
+  #user = DB_USERNAME,
+  #password = DB_PASSWORD,
+  #)
   return(connection)
 }
 
@@ -20,9 +23,10 @@ banco.provider.openConnection = function(){
 #
 # @return objeto connection com conexao do banco de dados
 #==================================================================
-banco.provider.executeQuery = function(statement){
+banco.provider.executeQuery = function(statement) {
   connection = banco.provider.openConnection()
-  result = set_utf8(dbGetQuery(connection,statement))
+  result = dbGetQuery(connection, statement)
+  result = set_utf8(result)
   dbDisconnect(connection)
   return(result)
 }

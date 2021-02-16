@@ -18,8 +18,8 @@ itemFiltroUI = function() {
     dateRangeInput(
       inputId = "periodoInput",
       label = "Selecione o periodo:",
-      start = Sys.Date(),
-      end = Sys.Date()
+      start = '2021-02-11',
+      end = '2021-02-15'
     )
   )
   

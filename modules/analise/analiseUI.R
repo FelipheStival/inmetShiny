@@ -9,7 +9,9 @@ createAnaliseUI = function() {
                    "Analise",
                    withSpinner(dataTableOutput("tabelaSumario")),
                    downloadButton("DownloadSumario", label = "Download")
-                 )))
+                         )
+                 )
+          )
 }
 
 #==================================================================

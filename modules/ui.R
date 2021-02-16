@@ -12,6 +12,7 @@ ui = dashboardPage(
    #=======================SiderBar========================
    
    dashboardSidebar(
+      width = 260,
       sidebarMenu(
          itemMenuMapa(),
          itemMenuAnalise(),
@@ -37,9 +38,13 @@ ui = dashboardPage(
          createPeriodoChuvosoUI(),
          createTabelaUI(),
          createGraficoBasicoUI(),
-         createDiaSecoUmidoUI()
+         createDiaSecoUmidoUI(),
+         createPrecipitacaoAnomaliaUI(),
+         createAnomaliaTemperaturaUI()
       )
    )
    
    #========================================================
 )
+
+ui = secure_app(ui,enable_admin = TRUE)

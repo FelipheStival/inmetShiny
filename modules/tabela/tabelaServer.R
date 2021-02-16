@@ -7,6 +7,7 @@
 # @conexao conexao com banco de dados
 #==================================================================
 tabelaServer = function(input, output, session) {
+  
   # Obter dados diarios
   dadosDiarios = reactive({
     dados = tabela.provider.dados(input$cidadeInput,

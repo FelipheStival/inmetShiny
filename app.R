@@ -1,5 +1,4 @@
 
-
 #==============================================#
 # Carregando pacotes a serem utilizados
 app.LoadPackages = function()
@@ -17,7 +16,15 @@ app.LoadPackages = function()
   require(seas)
   require(reshape2)
   require(DT)
-  require(superheat)
+  require(renv)
+  require(RSQLite)
+  require(ggplot2)
+  require(dplyr)
+  require(lubridate)
+  require(stringr)
+  require(ggthemes)
+  require(ggrepel)
+  
   
   #==============================================#
   

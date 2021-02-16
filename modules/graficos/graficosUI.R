@@ -7,7 +7,9 @@ createdadosPerdidosUI = function() {
           box(width = 12,
               withSpinner(
                 plotOutput("dadosPerdidosPlot", width = "100%", height = "85vh")
-              )))
+                         )
+              )
+          )
 }
 
 #==================================================================
@@ -22,7 +24,7 @@ createMapaMatrizUI = function() {
               inputId = "variavelSelect",
               label = "Selecione a variavel:",
               choices = c(
-                "Precipitacao" = "rain",
+                "Precipitacao(mm)" = "rain",
                 "Temperatura maxima(*C)" = "maximum_temperature",
                 "Temperatura minima(*C)" = "minimum_temperature",
                 "Radiacao solar global(MJ/m2)" = "global_radiation",
@@ -43,8 +45,9 @@ createMapaMatrizUI = function() {
           ),
           box(
             width = 8,
-            plotOutput("Matrizplot", width = "100%", height = "85vh")
-          ))
+            withSpinner(plotOutput("Matrizplot", width = "100%", height = "85vh"))
+             )
+          )
 }
 
 #==================================================================
@@ -65,10 +68,10 @@ createPrecipitacaoUI = function() {
               )
             )
           ),
-          box(
-            width = 8,
-            plotOutput("plotPrecipitacao", width = "100%", height = "85vh")
-          ))
+          box(width = 8,
+              withSpinner(plotOutput("plotPrecipitacao", width = "100%", height = "85vh"))
+              )
+          )
 }
 
 #==================================================================
@@ -78,8 +81,33 @@ createPrecipitacaoCumulativaUI = function() {
   #criando janela
   tabItem(tabName = "PrecipitacaoCumulativa",
           box(width = 12,
-              plotOutput("PrecipitacaoCumulativaPlot")))
+              withSpinner(plotOutput("PrecipitacaoCumulativaPlot",width = '100%',height = "85vh"))))
 }
+
+#==================================================================
+#  Anomalia Precipitacao IU
+#==================================================================
+createPrecipitacaoAnomaliaUI = function() {
+  #criando janela
+  tabItem(tabName = "AnomaliaPrecipitacaoplot",
+          box(
+            width = 3,
+            selectInput(
+              inputId = "anoSelectAnomalia",
+              label = "Selecione o ano: ",
+              choices = NULL
+            )
+          ),
+          box(width = 9,
+              withSpinner(
+                plotOutput(
+                  "anomaliaPrecipitacaoPlot",
+                  width = "100%",
+                  height = "85vh"
+                )
+              )))
+}
+
 
 #==================================================================
 # Periodo chuvoso UI
@@ -88,8 +116,27 @@ createPeriodoChuvosoUI = function() {
   #criando janela
   tabItem(tabName = "periodoChuvosoPlot",
           box(width = 12,
-              plotOutput("periodoChuvosoPlot")))
+              height = "85vh",
+              withSpinner(plotOutput(
+                "periodoChuvosoPlot",
+                width = "100%",
+                height = "85vh"
+              ))))
 }
+
+
+#==================================================================
+# Anomalia temperatura UI
+#==================================================================
+createAnomaliaTemperaturaUI = function() {
+  #criando janela
+  tabItem(tabName = "AnomaliaTemperaturaPlot",
+          box(
+            width = 12,
+            withSpinner(plotOutput("AnomaliaTemperaturaPlot", width = "100%",height = "85vh"))
+          ))
+}
+
 
 #==================================================================
 # grafico dia seco e umido
@@ -110,7 +157,9 @@ createDiaSecoUmidoUI = function() {
             )
           ),
           box(width = 8,
-              plotOutput("secoUmidoPlot")))
+              withSpinner(plotOutput("secoUmidoPlot", width = "100%",height = "85vh"))
+              )
+          )
 }
 
 
@@ -145,14 +194,14 @@ createGraficoBasicoUI = function() {
               )
             )
           ),
-          box(
-            width = 8,
-            plotOutput(
-              "graficosPerdidosPlot",
-              width = "100%",
-              height = "80vh"
-            )
-          ))
+          box(width = 8,
+              withSpinner(
+                plotOutput(
+                  "graficosPerdidosPlot",
+                  width = "100%",
+                  height = "80vh"
+                )
+              )))
 }
 
 #==================================================================
@@ -181,6 +230,16 @@ itemMenuGraficos = function() {
     menuSubItem(
       text = "Precipitacao",
       tabName = "Precipitacaoplot",
+      icon = icon("bar-chart")
+    ),
+    menuSubItem(
+      text = "Anomalia Precipitacao",
+      tabName = "AnomaliaPrecipitacaoplot",
+      icon = icon("bar-chart")
+    ),
+    menuSubItem(
+      text = "Anomalia Temperatura Precipitacao",
+      tabName = "AnomaliaTemperaturaPlot",
       icon = icon("bar-chart")
     ),
     menuSubItem(

@@ -7,7 +7,7 @@
 analise.provider.sumario = function(estado) {
   # obtendo dados
   statement = sprintf(
-    "SELECT inmet_daily_data.id,
+   "SELECT inmet_daily_data.id,
 	   station.id as id_estacao,
 	   station.code,
 	   city.latitude,
@@ -26,14 +26,15 @@ analise.provider.sumario = function(estado) {
 	   inmet_daily_data.minimum_dew_point,
 	   inmet_daily_data.maximum_dew_point,
 	   inmet_daily_data.rain
-	FROM public.inmet_daily_data
-	iNNER JOIN station ON inmet_daily_data.station_id = station.id
-	INNER JOIN city ON station.city_id = city.id
-	INNER JOIN state ON city.state_id = state.id
+	FROM inmet_daily_data
+	JOIN station ON inmet_daily_data.station_id = station.id
+  JOIN city ON station.city_id = city.id
+	JOIN state ON city.state_id = state.id
 	WHERE state.name = '%s'
 	ORDER BY id_estacao,inmet_daily_data.measurement_date",
     estado
   )
+  
   dados = banco.provider.executeQuery(statement)
   
   # Preparando colunas
@@ -108,7 +109,7 @@ analise.provider.sumario = function(estado) {
     "Dados faltantes temperatura maxima" ,
     "Dados faltantes precipitacao minima" ,
     "Dados faltantes precipitacao maxima" ,
-    "Dados faltantes umidade relativa_minima do ar",
+    "Dados faltantes umidade relativa minima do ar",
     "Dados faltantes umidade relativa maxima do ar",
     "Dados faltantes velocidade do vento" ,
     "Dados faltantes direcao do vento"  ,
@@ -174,8 +175,8 @@ analise.provider.prepare = function(dados) {
 analise.provider.contarNA = function(dados) {
   estacoes = unique(dados$code)
   for (estacao in estacoes) {
-    tempData = dados[dados$code %in% estacao,]
-    quantidade = colSums(tempData == 0)
+    tempData = dados[dados$code %in% estacao, ]
+    quantidade = colSums(is.na(tempData))
     
     #Preechendo valores
     dados[dados$code %in% estacao, "dados_faltantes_temperatura_minima"] = quantidade[9]
@@ -202,6 +203,9 @@ analise.provider.contarNA = function(dados) {
 # @return data.frame com colunas criadas
 #==================================================================
 analise.provider.contarANOS = function(dados) {
+  # Convertendo coluna para data
+  dados$measurement_date = as.Date(dados$measurement_date)
+  
   # Criando coluna ano
   dados$ano = format(dados$measurement_date, "%Y")
   
@@ -216,9 +220,9 @@ analise.provider.contarANOS = function(dados) {
     anos = unique(dados[dados$code %in% estacao, "ano"])
     for (ano in anos) {
       tempData = dados[dados$code %in% estacao &
-                         dados$ano %in% ano,]
+                         dados$ano %in% ano, ]
       for (i in 1:length(nomesColunas)) {
-        checarAno = which(tempData[, nomesColunas[i]] == 0)
+        checarAno = which(is.na(tempData[, nomesColunas[i]]))
         if (length(checarAno) == 0) {
           dados[dados$code %in% estacao, nomesAcumular[i]] =  dados[dados$code %in% estacao, nomesAcumular[i]] + 1
         }

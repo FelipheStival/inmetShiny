@@ -4,11 +4,12 @@
 createMapaUI = function() {
   #criando janela
   tabItem(tabName = "mapaTab",
-          
-          leafletOutput(
-            outputId = "mapaEstacoes",
-            width = "100%",
-            height = "90vh"
+          withSpinner(
+            leafletOutput(
+              outputId = "mapaEstacoes",
+              width = "100%",
+              height = "90vh"
+            )
           ))
   
 }

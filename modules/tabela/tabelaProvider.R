@@ -20,22 +20,20 @@ tabela.provider.dados = function(municipio, startDate, endDate) {
 	   inmet_daily_data.global_radiation, minimum_dew_point,
 	   inmet_daily_data.maximum_dew_point,
 	   inmet_daily_data.rain
-	FROM public.inmet_daily_data
-	INNER JOIN station ON inmet_daily_data.station_id = station.id
-	INNER JOIN city ON station.city_id = city.id
+	FROM inmet_daily_data
+  JOIN station ON inmet_daily_data.station_id = station.id
+	JOIN city ON station.city_id = city.id
 	WHERE city.name = '%s'
 	AND
 	inmet_daily_data.measurement_date >= '%s'
 	AND
 	inmet_daily_data.measurement_date <= '%s'
-	ORDER BY inmet_daily_data.measurement_date
-	",
+	ORDER BY inmet_daily_data.measurement_date",
     municipio,
     startDate,
     endDate
   )
   
-  cat(statement)
   dados = banco.provider.executeQuery(statement)
   
   # Selecionando colunas
@@ -92,9 +90,9 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
 	   inmet_hourly_data.maximum_dew_point,
 	   inmet_hourly_data.instant_dew_point,
 	   inmet_hourly_data.rain
-	FROM public.inmet_hourly_data
-	INNER JOIN station ON inmet_hourly_data.station_id = station.id
-	INNER JOIN city ON station.city_id = city.id
+	FROM inmet_hourly_data
+	JOIN station ON inmet_hourly_data.station_id = station.id
+	JOIN city ON station.city_id = city.id
 	WHERE city.name = '%s'
 	AND
 	inmet_hourly_data.measurement_date >= '%s'
@@ -105,6 +103,7 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
     startDate,
     endDate
   )
+
   dados = banco.provider.executeQuery(statement)
   
   # Selecionando colunas

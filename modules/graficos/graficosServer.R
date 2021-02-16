@@ -7,6 +7,7 @@
 # @data objeto do tipo data.frame com dados das estacoes
 #==================================================================
 graficosServer = function(input, output, session) {
+  
   # Dados graficos basicos
   dadosGraficos = reactive({
     dados = graficos.provider.dados(input$cidadeInput,
@@ -22,69 +23,130 @@ graficosServer = function(input, output, session) {
                                             input$periodoInput[2])
   })
   
+  #Dados grafico anomalia
+  dadosAnomaliaTemperatura = reactive({
+    dados = grafico.provider.dadosPrec(dadosGraficos())
+    return(dados)
+  })
+  
+  # Atualizando input ano anomalia
+  observe({
+    if (!is.null(input$cidadeInput)) {
+      if (input$cidadeInput != '') {
+        # Obtendo range data
+        rangeDate = c(min(dadosGraficos()$data),
+                      max(dadosGraficos()$data))
+        
+        # Gerando anos
+        anos = graficos.provider.rangeDate(rangeDate[1], rangeDate[2])
+        
+        # Atualizando input
+        updateSelectInput(session = session,
+                          inputId = "anoSelectAnomalia",
+                          choices = anos)
+      }
+    }
+  })
+  
   # Grafico dados perdidos
   output$dadosPerdidosPlot = renderPlot({
-    graficos.chart.dadosPerdidos(dadosHeatMap())
+      graficos.chart.dadosPerdidos(dadosHeatMap()) 
   })
   
   # Grafico matriz
   output$Matrizplot = renderPlot({
-    graficos.GraficoMatriz(
-      dados = dadosGraficos(),
-      Municipio = input$cidadeInput,
-      Coluna = input$variavelSelect,
-      cor = graficos.provider.grafico.cor(input$variavelSelect),
-      intervalo = input$grupoDiasSelect
-    )
+    if(input$cidadeInput != ''){
+      graficos.GraficoMatriz(
+        dados = dadosGraficos(),
+        Municipio = input$cidadeInput,
+        Coluna = input$variavelSelect,
+        cor = graficos.provider.grafico.cor(input$variavelSelect),
+        intervalo = input$grupoDiasSelect
+      )
+    }
   })
   
-  #Grafico precipitacao
+  # Grafico precipitacao
   output$plotPrecipitacao = renderPlot({
-    grafico.precipitacao(
-      dados = dadosGraficos(),
-      Municipio = input$cidadeInput,
-      Grupodias = input$grupoDiasSelectPrec,
-      Coluna = "rain"
-    )
+    if(input$cidadeInput != ''){
+      grafico.precipitacao(
+        dados = dadosGraficos(),
+        Municipio = input$cidadeInput,
+        Grupodias = input$grupoDiasSelectPrec,
+        Coluna = "rain"
+      ) 
+    }
   })
   
-  #Grafico precipitacao Cumulativa
+  # Grafico precipitacao Cumulativa
   output$PrecipitacaoCumulativaPlot = renderPlot({
-    grafico.precipitacaoAcumulada(
-      tabela = dadosGraficos(),
-      Municipio = input$cidadeInput,
-      Coluna = "rain"
-    )
+    if(input$cidadeInput != ''){
+      grafico.precipitacaoAcumulada(
+        tabela = dadosGraficos(),
+        Municipio = input$cidadeInput,
+        Coluna = "rain"
+      ) 
+    }
   })
   
-  #Grafico precipitacao climativo
+  # Grafico precipitacao climativo
   output$periodoChuvosoPlot = renderPlot({
-    graficos.periodoClimatico(
-      dados = dadosGraficos(),
-      Municipio = input$cidadeInput,
-      Coluna = "maximum_precipitation"
-    )
+    if(input$cidadeInput != ''){
+      graficos.periodoClimatico(
+        dados = dadosGraficos(),
+        Municipio = input$cidadeInput,
+        Coluna = "rain"
+      ) 
+    }
   })
   
   # Grafico boxplot
   output$graficosPerdidosPlot = renderPlot({
-    grafico.boxplot(
-      tabela = dadosGraficos(),
-      nomeEstacao = input$cidadeInput,
-      Grupodias = input$grupodiasBoxPlot,
-      colunaVariavel = input$boxplotVariavel,
-      color = graficos.provider.grafico.cor(input$boxplotVariavel),
-      ylab = graficos.provider.grafico.legenda(input$boxplotVariavel)
-    )
+    if(input$cidadeInput != ''){
+      grafico.boxplot(
+        tabela = dadosGraficos(),
+        nomeEstacao = input$cidadeInput,
+        Grupodias = input$grupodiasBoxPlot,
+        colunaVariavel = input$boxplotVariavel,
+        color = graficos.provider.grafico.cor(input$boxplotVariavel),
+        ylab = graficos.provider.grafico.legenda(input$boxplotVariavel)
+      ) 
+    }
   })
   
   # Grafico Seco Umido
   output$secoUmidoPlot = renderPlot({
-    grafico.diaSecoUmido(
-      tabela = dadosGraficos(),
-      colunaPrecipitacao = "rain",
-      Municipio = input$cidadeInput,
-      intervalo = input$secoUmidoGrupoDias
-    )
+    if(input$cidadeInput != ''){
+      grafico.diaSecoUmido(
+        tabela = dadosGraficos(),
+        colunaPrecipitacao = "rain",
+        Municipio = input$cidadeInput,
+        intervalo = input$secoUmidoGrupoDias
+      ) 
+    }
+  })
+  
+  # Grafico anomalia precipitacao
+  output$anomaliaPrecipitacaoPlot = renderPlot({
+    if(input$cidadeInput != ''){
+      grafico.GraficoAnomalia(
+        municipio = input$cidadeInput,
+        ano = input$anoSelectAnomalia,
+        coluna = "rain",
+        dadosGraficos(),
+        ylab = "precipitacao",
+        Escala = 100
+      ) 
+    }
+  })
+  
+  # Grafico anomalia temperatura
+  output$AnomaliaTemperaturaPlot = renderPlot({
+    if(input$cidadeInput != ''){
+      grafico.anomalia.temperatura(
+        data_inv = dadosAnomaliaTemperatura(),
+        municipio = input$cidadeInput
+      ) 
+    }
   })
 }

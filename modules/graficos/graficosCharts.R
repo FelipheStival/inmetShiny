@@ -18,6 +18,7 @@ graficos.chart.dadosPerdidos = function(dados) {
 #==================================================================
 graficos.GraficoMatriz = function(dados, Municipio, Coluna, cor, intervalo)
 {
+  
   intervalo = ifelse(!is.na(as.numeric(intervalo)), as.numeric(intervalo), "mon")
   dados[[Coluna]] = as.numeric(dados[[Coluna]])
   
@@ -31,6 +32,7 @@ graficos.GraficoMatriz = function(dados, Municipio, Coluna, cor, intervalo)
   names(dados)[indexData] = "date"
   
   dados = dados[, c("date", Coluna)]
+  dados = dados[order(dados$date),]
   
   paleta = colorRampPalette(c("white", cor))(64)
   
@@ -110,6 +112,8 @@ grafico.boxplot = function(tabela,
   indexData = which(names(tabela) == "data")
   names(tabela)[indexData] = "date"
   
+  
+  
   seas.var.plot(
     tabela,
     var = colunaVariavel,
@@ -131,6 +135,7 @@ grafico.boxplot = function(tabela,
 #======================================================================
 grafico.precipitacaoAcumulada = function(tabela, Municipio, Coluna)
 {
+  
   tabela[[Coluna]] = as.numeric(tabela[[Coluna]])
   
   tabela$data = as.Date(tabela$data)
@@ -146,6 +151,9 @@ grafico.precipitacaoAcumulada = function(tabela, Municipio, Coluna)
   tabela$rain = tabela$precip
   
   tabela$snow = 0
+  
+  tabela = tabela[, c("date","precip","rain","snow")]
+  tabela = tabela[order(tabela$date),]
   
   
   s.s = seas.sum(tabela, width = 10)
@@ -173,6 +181,7 @@ grafico.diaSecoUmido = function(tabela,
                                 Municipio,
                                 intervalo)
 {
+  
   tabela$id = NULL
   tabela[[colunaPrecipitacao]] = as.numeric(tabela[[colunaPrecipitacao]])
   
@@ -183,6 +192,8 @@ grafico.diaSecoUmido = function(tabela,
   
   indexData = which(names(tabela) %in% c("data", colunaPrecipitacao))
   names(tabela)[indexData] = c("date", "precip")
+  tabela = tabela[,c("date", "precip")]
+  tabela = tabela[order(tabela$date),]
   
   titulo = sprintf("Municipio '%s'\n %s - %s", Municipio, year.min, year.max)
   
@@ -204,10 +215,12 @@ grafico.diaSecoUmido = function(tabela,
 # @param Coluna coluna selecionada
 #======================================================================
 graficos.periodoClimatico = function(dados, Municipio, Coluna) {
+  
   dados$data = as.Date(dados$data)
+  dados = dados[!is.na(dados$rain),]
   dados[[Coluna]] = as.numeric(dados[[Coluna]])
   
-  R.prec = mean(dados[[Coluna]])
+  R.prec = mean(dados[[Coluna]],na.rm = T)
   dados$R_diff = NA
   
   for (linha in 1:dim(dados)[1]) {
@@ -224,7 +237,7 @@ graficos.periodoClimatico = function(dados, Municipio, Coluna) {
   
   resumo = dcast(dados, ano ~ mes, value.var = "R_diff", fun = mean)
   
-  prec_media = apply(resumo[,-1], 2, mean)
+  prec_media = apply(resumo[, -1], 2, mean,na.rm = T)
   prec_media = data.frame(mes = names(prec_media), media = prec_media)
   
   inicioChuva = prec_media$mes[prec_media$media == min(prec_media$media)]
@@ -272,4 +285,225 @@ graficos.periodoClimatico = function(dados, Municipio, Coluna) {
         'Dezembro'
       )
     )
+}
+#======================================================================
+# Metodo para criar o grafico de anomalia
+#
+# @param municipio municipio selecionado
+# @param ano ano selecionado
+# @param coluna coluna selecionada
+# @param dados_tabela_principal dados completos
+# @param ylab nome eixo Y
+# @param Escala escala do grafico
+#======================================================================
+
+grafico.GraficoAnomalia = function(municipio,
+                                   ano,
+                                   coluna,
+                                   dados_tabela_principal,
+                                   ylab,
+                                   Escala)
+{
+  ano = as.numeric(unlist(strsplit(ano, "-")))
+  dados = dados_tabela_principal %>%
+    select(data, municipio, coluna) %>%
+    mutate(
+      DATE = ymd(data),
+      RR = ifelse(
+        dados_tabela_principal[[coluna]] == -9999,
+        NULL,
+        dados_tabela_principal[[coluna]] / 10
+      )
+    ) %>%
+    select(DATE, RR) %>%
+    rename(date = DATE, pr = RR)
+  
+  dados = mutate(dados, mo = month(date, label = TRUE), yr = year(date)) %>%
+    filter(date >= min(dados$date)) %>%
+    group_by(yr, mo) %>%
+    summarise(prs = sum(pr, na.rm = TRUE))
+  
+  pr_ref = filter(dados, yr > min(dados$yr), yr <= max(dados$yr)) %>%
+    group_by(mo) %>%
+    summarise(pr_ref = mean(prs))
+  
+  dados = left_join(dados, pr_ref, by = "mo")
+  
+  dados = mutate(
+    dados,
+    anom = (prs * 100 / pr_ref) - 100,
+    date = str_c(yr, as.numeric(mo), 1, sep = "-") %>%
+      ymd(),
+    sign = ifelse(anom > 0, "pos", "neg")
+  )
+  
+  data_norm =  group_by(dados, mo) %>%
+    summarise(
+      mx = max(anom),
+      min = min(anom),
+      q25 = quantile(anom, .25),
+      q75 = quantile(anom, .75),
+      iqr = q75 - q25
+    )
+  
+  Meses = c('set', 'out', 'nov', 'dez', 'jan', 'fev', 'mar', 'mai')
+  
+  #data_norm = data_norm %>% filter(mo %in% Meses) %>% mutate(mo = factor(mo,levels = Meses))
+  #dados = dados %>% filter(mo %in% Meses) %>% mutate(mo = factor(mo,levels = Meses))
+  
+  data_norm = data_norm %>% filter(mo %in% Meses)
+  data_norm$mo = factor(data_norm$mo, levels = Meses)
+  
+  dados = dados %>% filter(mo %in% Meses)
+  dados$mo = factor(dados$mo, levels = Meses)
+  
+  
+  g1 = ggplot(data_norm) + geom_crossbar(
+    aes(
+      x = mo,
+      y = 0,
+      ymin = min,
+      ymax = mx
+    ),
+    fatten = 0,
+    fill = "grey90",
+    colour = "NA"
+  ) +
+    geom_crossbar(aes(
+      x = mo,
+      y = 0,
+      ymin = q25,
+      ymax = q75
+    ),
+    fatten = 0,
+    fill = "grey70")
+  g1 =  g1 + geom_crossbar(
+    data = filter(dados, ano == yr),
+    aes(
+      x = mo,
+      y = 0,
+      ymin = 0,
+      ymax = anom,
+      fill = sign
+    ),
+    fatten = 0,
+    width = 0.7,
+    alpha = .7,
+    colour = "NA",
+    show.legend = FALSE
+  )
+  g1 = g1 + geom_hline(yintercept = 0) + scale_fill_manual(values = c("#99000d", "#034e7b")) +
+    scale_y_continuous(
+      sprintf("Anomalia da %s em (%s)", ylab, "%"),
+      breaks = seq(-100, 1200, Escala),
+      expand = c(0, 10)
+    )
+  g1 = g1 + labs(x = "", title = as.character(sprintf("Anomalia da  %s em %s", ylab, municipio)))  + theme_hc()
+  
+  g1
+}
+
+
+#======================================================================
+# Metodo para criar o grafico anomalia da precipitacao
+#
+# @param dados data.frame com dados do grafico
+# @param Municipio municipio selecionado
+# @param Coluna coluna selecionada
+#======================================================================
+grafico.anomalia.temperatura = function(data_inv, municipio) {
+  
+  #criando grafico
+  data_inv_p = mutate(data_inv, pr_anom = pr_anom * -1)
+  bglab = data.frame(
+    x = c(-Inf, Inf, -Inf, Inf),
+    y = c(Inf, Inf, -Inf, -Inf),
+    hjust = c(1, 1, 0, 0),
+    vjust = c(1, 0, 1, 0),
+    lab = c("?mido-Quente", "Seco-Quente",
+            "?mido-Frio", "Seco-Frio")
+  )
+  g1 = ggplot(data_inv_p, aes(pr_anom, ta_anom)) +
+    annotate(
+      "rect",
+      xmin = -Inf,
+      xmax = 0,
+      ymin = 0,
+      ymax = Inf,
+      fill = "#fc9272",
+      alpha = .6
+    ) + #Umido-Quente
+    annotate(
+      "rect",
+      xmin = 0,
+      xmax = Inf,
+      ymin = 0,
+      ymax = Inf,
+      fill = "#cb181d",
+      alpha = .6
+    ) + #Seco-Quente
+    annotate(
+      "rect",
+      xmin = -Inf,
+      xmax = 0,
+      ymin = -Inf,
+      ymax = 0,
+      fill = "#2171b5",
+      alpha = .6
+    ) + #mido-Frio
+    annotate(
+      "rect",
+      xmin = 0,
+      xmax = Inf,
+      ymin = -Inf,
+      ymax = 0,
+      fill = "#c6dbef",
+      alpha = .6
+    ) + #Seco-Frio
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    geom_text(
+      data = bglab,
+      aes(
+        x,
+        y,
+        label = lab,
+        hjust = hjust,
+        vjust = vjust
+      ),
+      fontface = "italic",
+      size = 5,
+      angle = 90,
+      colour = "white"
+    )
+  
+  
+  g1 = g1 + geom_point(
+    aes(fill = symb_point, colour = symb_point),
+    size = 2.8,
+    shape = 21,
+    show.legend = FALSE
+  ) +
+    geom_text_repel(aes(label = labyr, fontface = lab_font),
+                    max.iter = 10000,
+                    size = 3.5)
+  
+  
+  g1 = g1 + scale_x_continuous(
+    "Anomalia da precipitacao em %",
+    breaks = seq(-100, 250, 10) * -1,
+    labels = seq(-100, 250, 10),
+    limits = c(min(data_inv_p$pr_anom), 100)
+  ) +
+    scale_y_continuous("Anomalia da temperatura media em ?C",
+                       breaks = seq(-2, 2, 0.5)) +
+    scale_fill_manual(values = c("black", "white")) +
+    scale_colour_manual(values = rev(c("black", "white"))) +
+    labs(
+      title = sprintf("Anomalias Aguas (Outubro a Marco) em %s", municipio),
+      caption = "Data: Embrapa\ periodo 1980-2020"
+    ) +
+    theme_bw()
+  
+  return(g1)
 }
