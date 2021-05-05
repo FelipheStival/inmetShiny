@@ -10,7 +10,6 @@ filtroServer = function(input, output, session) {
   
   #Atualizando estados
   observe({
-    if(!is.null(input$estadoInput)){
       estados = filtro.provider.obterEstados(conexao)
       updateSelectInput(
         session = session,
@@ -18,7 +17,6 @@ filtroServer = function(input, output, session) {
         choices = estados$name,
         selected = estados$name[1]
       ) 
-    }
   })
   
   # Atualizando cidades

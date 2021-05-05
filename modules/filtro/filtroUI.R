@@ -8,7 +8,7 @@ itemFiltroUI = function() {
     selectInput(
       inputId = "estadoInput",
       label = "Selecione o estado:",
-      choices = NULL
+      choices = "GO"
     ),
     selectInput(
       inputId = "cidadeInput",

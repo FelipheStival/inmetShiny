@@ -7,13 +7,13 @@ banco.provider.openConnection = function() {
   connection = dbConnect(RSQLite::SQLite(),
                          "inmet.db")
   
-  #connection = dbConnect(
-  #DB_DRIVER,
-  #dbname = DB_DATABASE,
-  #host = DB_HOST,
-  #port = DB_PORT,
-  #user = DB_USERNAME,
-  #password = DB_PASSWORD,
+ # connection = dbConnect(
+    #DB_DRIVER,
+   # dbname = DB_DATABASE,
+    #host = DB_HOST,
+    #port = DB_PORT,
+    #user = DB_USERNAME,
+   # password = DB_PASSWORD,
   #)
   return(connection)
 }
