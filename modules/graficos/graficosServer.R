@@ -16,13 +16,6 @@ graficosServer = function(input, output, session) {
     return(dados)
   })
   
-  # Dados grafico heatmap
-  dadosHeatMap = reactive({
-    dados = graficos.provider.dadosPerdidos(input$estadoInput,
-                                            input$periodoInput[1],
-                                            input$periodoInput[2])
-  })
-  
   #Dados grafico anomalia
   dadosAnomaliaTemperatura = reactive({
     dados = grafico.provider.dadosPrec(dadosGraficos())
@@ -46,11 +39,6 @@ graficosServer = function(input, output, session) {
                           choices = anos)
       }
     }
-  })
-  
-  # Grafico dados perdidos
-  output$dadosPerdidosPlot = renderPlot({
-      graficos.chart.dadosPerdidos(dadosHeatMap()) 
   })
   
   # Grafico matriz
@@ -130,7 +118,7 @@ graficosServer = function(input, output, session) {
   output$anomaliaPrecipitacaoPlot = renderPlot({
     if(input$cidadeInput != ''){
       grafico.GraficoAnomalia(
-        municipio = input$cidadeInput,
+        cidade = input$cidadeInput,
         ano = input$anoSelectAnomalia,
         coluna = "rain",
         dadosGraficos(),

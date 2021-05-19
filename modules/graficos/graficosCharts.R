@@ -1,16 +1,4 @@
 #==================================================================
-# Metodo para gerar o grafico de dados perdidos
-#
-# @param conexao conexao com banco de dados
-# @return data.frame com dados dos estados
-#==================================================================
-graficos.chart.dadosPerdidos = function(dados) {
-  grafico =  ggplot(data = dados, aes(x = Variavel, y = Estacao)) + geom_tile(aes(fill = Valor), colour = "white") +
-    scale_fill_gradient(low = "#7cb342", high = "#e53935") + theme_minimal()
-  return(grafico)
-}
-
-#==================================================================
 # Metodo para criar o grafico matriz
 #
 # @param conexao conexao com banco de dados
@@ -297,110 +285,71 @@ graficos.periodoClimatico = function(dados, Municipio, Coluna) {
 # @param Escala escala do grafico
 #======================================================================
 
-grafico.GraficoAnomalia = function(municipio,
+grafico.GraficoAnomalia = function(cidade,
                                    ano,
                                    coluna,
                                    dados_tabela_principal,
                                    ylab,
                                    Escala)
 {
-  ano = as.numeric(unlist(strsplit(ano, "-")))
+  
   dados = dados_tabela_principal %>%
-    select(data, municipio, coluna) %>%
-    mutate(
-      DATE = ymd(data),
-      RR = ifelse(
-        dados_tabela_principal[[coluna]] == -9999,
-        NULL,
-        dados_tabela_principal[[coluna]] / 10
-      )
-    ) %>%
-    select(DATE, RR) %>%
+    select(data,municipio,rain) %>% 
+    filter(municipio == cidade) %>% 
+    mutate(DATE = ymd(data), RR = ifelse(rain == -9999, NA, rain/10)) %>% 
+    select(DATE,RR) %>% 
     rename(date = DATE, pr = RR)
   
-  dados = mutate(dados, mo = month(date, label = TRUE), yr = year(date)) %>%
-    filter(date >= min(dados$date)) %>%
-    group_by(yr, mo) %>%
-    summarise(prs = sum(pr, na.rm = TRUE))
+  dados <- mutate(dados, mo = month(date, label = TRUE), yr = year(date)) %>% 
+    filter(date >= min(dados$date)) %>% 
+    group_by(yr, mo) %>% 
+    summarise(prs = sum( pr, na.rm = TRUE))
   
-  pr_ref = filter(dados, yr > min(dados$yr), yr <= max(dados$yr)) %>%
-    group_by(mo) %>%
+  pr_ref <- filter(dados, yr > min(dados$yr), yr <= max(dados$yr)) %>% 
+    group_by(mo) %>% 
     summarise(pr_ref = mean(prs))
   
-  dados = left_join(dados, pr_ref, by = "mo")
+  dados <- left_join(dados, pr_ref, by = "mo")
   
-  dados = mutate(
-    dados,
-    anom = (prs * 100 / pr_ref) - 100,
-    date = str_c(yr, as.numeric(mo), 1, sep = "-") %>%
-      ymd(),
-    sign = ifelse(anom > 0, "pos", "neg")
-  )
+  dados <- mutate(dados, anom = (prs*100/pr_ref)-100,  date = str_c(yr, as.numeric(mo), 1, sep = "-") %>% 
+                    ymd(),sign= ifelse(anom > 0, "pos", "neg"))
   
-  data_norm =  group_by(dados, mo) %>%
-    summarise(
-      mx = max(anom),
-      min = min(anom),
-      q25 = quantile(anom, .25),
-      q75 = quantile(anom, .75),
-      iqr = q75 - q25
+  Meses = c('set','out','nov','dez','jan','fev','mar','mai')
+  
+  dados = dados %>% mutate(filtro = format(date,'%m')) %>%
+    filter(mo %in% Meses)
+  dados$mo = factor(dados$mo,levels = Meses)
+  
+  ano = str_split(ano,"-")[[1]]
+  Filter_ano_um = dados %>%
+    filter(yr == ano[1],
+           mo == "set" |
+             mo == "out" |
+             mo == "nov" |
+             mo == "dez"
     )
   
-  Meses = c('set', 'out', 'nov', 'dez', 'jan', 'fev', 'mar', 'mai')
-  
-  #data_norm = data_norm %>% filter(mo %in% Meses) %>% mutate(mo = factor(mo,levels = Meses))
-  #dados = dados %>% filter(mo %in% Meses) %>% mutate(mo = factor(mo,levels = Meses))
-  
-  data_norm = data_norm %>% filter(mo %in% Meses)
-  data_norm$mo = factor(data_norm$mo, levels = Meses)
-  
-  dados = dados %>% filter(mo %in% Meses)
-  dados$mo = factor(dados$mo, levels = Meses)
-  
-  
-  g1 = ggplot(data_norm) + geom_crossbar(
-    aes(
-      x = mo,
-      y = 0,
-      ymin = min,
-      ymax = mx
-    ),
-    fatten = 0,
-    fill = "grey90",
-    colour = "NA"
-  ) +
-    geom_crossbar(aes(
-      x = mo,
-      y = 0,
-      ymin = q25,
-      ymax = q75
-    ),
-    fatten = 0,
-    fill = "grey70")
-  g1 =  g1 + geom_crossbar(
-    data = filter(dados, ano == yr),
-    aes(
-      x = mo,
-      y = 0,
-      ymin = 0,
-      ymax = anom,
-      fill = sign
-    ),
-    fatten = 0,
-    width = 0.7,
-    alpha = .7,
-    colour = "NA",
-    show.legend = FALSE
-  )
-  g1 = g1 + geom_hline(yintercept = 0) + scale_fill_manual(values = c("#99000d", "#034e7b")) +
-    scale_y_continuous(
-      sprintf("Anomalia da %s em (%s)", ylab, "%"),
-      breaks = seq(-100, 1200, Escala),
-      expand = c(0, 10)
+  Filter_ano_dois = dados %>%
+    filter(yr == ano[2],
+           mo == "jan" |
+             mo == "fev" |
+             mo == "mar" |
+             mo == "mai"
     )
-  g1 = g1 + labs(x = "", title = as.character(sprintf("Anomalia da  %s em %s", ylab, municipio)))  + theme_hc()
   
-  g1
+  Filter_rbind = rbind(Filter_ano_um,Filter_ano_dois)
+  
+  data_norm <-  group_by(dados, mo) %>% 
+    summarise(mx = max(anom),min = min(anom),q25 = quantile(anom, .25),q75 = quantile(anom, .75),iqr = q75-q25)
+  
+  g1 = ggplot(data_norm) + geom_crossbar(aes(x = mo, y = 0, ymin = min, ymax = mx),fatten = 0, fill = "grey90", colour = "NA") +
+    geom_crossbar(aes(x = mo, y = 0, ymin = q25, ymax = q75),fatten = 0, fill = "grey70") + theme_hc()
+  g1 =  g1 + geom_crossbar(data = Filter_rbind, aes(x = mo, y = 0, ymin = 0, ymax = anom, fill = sign),fatten = 0, width = 0.7, alpha = .7, colour = "NA",show.legend = FALSE)
+  g1 = g1 + geom_hline(yintercept = 0)+scale_fill_manual(values=c("#99000d","#034e7b"))+scale_y_continuous(as.character("Anomalia da precipitacao pluvial em (%)"),breaks = seq(-100,1200,100),expand = c(0, 5))
+  g1 = g1 + labs(x = "",title = as.character(sprintf("Anomalia precipitacao em %s",cidade))) + theme(text = element_text(size=16))
+  
+  
+  plot(g1)
 }
 
 
@@ -420,8 +369,8 @@ grafico.anomalia.temperatura = function(data_inv, municipio) {
     y = c(Inf, Inf, -Inf, -Inf),
     hjust = c(1, 1, 0, 0),
     vjust = c(1, 0, 1, 0),
-    lab = c("?mido-Quente", "Seco-Quente",
-            "?mido-Frio", "Seco-Frio")
+    lab = c("Umido-Quente", "Seco-Quente",
+            "Umido-Frio", "Seco-Frio")
   )
   g1 = ggplot(data_inv_p, aes(pr_anom, ta_anom)) +
     annotate(
@@ -474,7 +423,7 @@ grafico.anomalia.temperatura = function(data_inv, municipio) {
       fontface = "italic",
       size = 5,
       angle = 90,
-      colour = "white"
+      colour = "black"
     )
   
   
@@ -495,7 +444,7 @@ grafico.anomalia.temperatura = function(data_inv, municipio) {
     labels = seq(-100, 250, 10),
     limits = c(min(data_inv_p$pr_anom), 100)
   ) +
-    scale_y_continuous("Anomalia da temperatura media em ?C",
+    scale_y_continuous("Anomalia da temperatura media em C",
                        breaks = seq(-2, 2, 0.5)) +
     scale_fill_manual(values = c("black", "white")) +
     scale_colour_manual(values = rev(c("black", "white"))) +

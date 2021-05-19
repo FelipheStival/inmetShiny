@@ -9,7 +9,7 @@
 mapaServer = function(input, output, session, conexao) {
   
   dadosMapa = reactive({
-    dados = mapa.provider.dadosMapa(input$estadoInput)
+    dados = mapa.provider.dadosMapa()
     return(dados)
   })
   

@@ -1,18 +1,4 @@
 #==================================================================
-# Dados perdidos UI
-#==================================================================
-createdadosPerdidosUI = function() {
-  #criando janela
-  tabItem(tabName = "dadosPerdidosplot",
-          box(width = 12,
-              withSpinner(
-                plotOutput("dadosPerdidosPlot", width = "100%", height = "85vh")
-                         )
-              )
-          )
-}
-
-#==================================================================
 # Mapa Matriz UI
 #==================================================================
 createMapaMatrizUI = function() {
@@ -212,11 +198,6 @@ itemMenuGraficos = function() {
     text = "Graficos",
     tabName = "analiseUI",
     icon = icon("line-chart"),
-    menuSubItem(
-      text = "Dados perdidos",
-      tabName = "dadosPerdidosplot",
-      icon = icon("bar-chart")
-    ),
     menuSubItem(
       text = "Grafico basico",
       tabName = "graficosPerdidosPlot",

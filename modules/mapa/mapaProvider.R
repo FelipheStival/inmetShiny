@@ -4,8 +4,8 @@
 # @estado string com estado selecionado
 # @return data.frame com dados filtrados
 #==================================================================
-mapa.provider.dadosMapa = function(estado){
-  statement = sprintf("SELECT    station.id, 
+mapa.provider.dadosMapa = function(){
+  statement = "SELECT DISTINCT station.id, 
 		  station.code as id_estacao,
 		  city.latitude,
 		  city.longitude,
@@ -13,7 +13,7 @@ mapa.provider.dadosMapa = function(estado){
 	FROM station 
 	JOIN city ON station.city_id = city.id
 	JOIN state ON city.state_id = state.id
-	WHERE state.name = '%s'",estado)
+  JOIN inmet_daily_data ON inmet_daily_data.station_id = station.id"
   dados = banco.provider.executeQuery(statement)
   return(dados)
 }

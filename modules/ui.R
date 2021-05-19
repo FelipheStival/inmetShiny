@@ -29,9 +29,9 @@ ui = dashboardPage(
    
    dashboardBody(
       tabItems(
-         createAnaliseUI(),
+         analiseUI(),
+         dadosperdidosUI(),
          createMapaUI(),
-         createdadosPerdidosUI(),
          createMapaMatrizUI(),
          createPrecipitacaoUI(),
          createPrecipitacaoCumulativaUI(),

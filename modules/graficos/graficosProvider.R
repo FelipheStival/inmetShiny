@@ -51,14 +51,10 @@ graficos.provider.dadosPerdidos = function(estado, inicio, fim) {
 	   city.name as nome_cidade,
 	   inmet_daily_data.minimum_temperature,
 	   inmet_daily_data.maximum_temperature,
-	   inmet_daily_data.minimum_precipitation,
-	   inmet_daily_data.maximum_precipitation,
 	   inmet_daily_data.minimum_relative_air_humidity,
 	   inmet_daily_data.maximum_relative_air_humidity,
-	   inmet_daily_data.wind_speed, wind_direction,
+	   inmet_daily_data.wind_speed, 
 	   inmet_daily_data.global_radiation,
-	   inmet_daily_data.minimum_dew_point,
-	   inmet_daily_data.maximum_dew_point,
 	   inmet_daily_data.rain
 	FROM inmet_daily_data
 	JOIN station ON inmet_daily_data.station_id = station.id
@@ -73,7 +69,21 @@ graficos.provider.dadosPerdidos = function(estado, inicio, fim) {
     inicio,
     fim
   )
+  
   dados = banco.provider.executeQuery(statement)
+  dados$nome_cidade = paste(dados$nome_cidade,estado,sep = "-")
+  
+  # Renomando colunas
+  names(dados) = c(
+    "nome_cidade",
+    "Temperatura minima",
+    "Temperatura maxima",
+    "Umidade minima do ar",
+    'Umidade maxima do ar',
+    "Velocidade do vento",
+    "Radiacao solar global",
+    "Precipitacao"
+  )
   
   # Preparando dados para gerar o grafico
   naTabela = melt(dados, id.vars = "nome_cidade")
@@ -83,7 +93,6 @@ graficos.provider.dadosPerdidos = function(estado, inicio, fim) {
                    fun.aggregate = naCounter)
   naTabela = melt(naTabela, id.vars = "nome_cidade")
   names(naTabela) = c("Estacao", "Variavel", "Valor")
-  
   return(naTabela)
 }
 

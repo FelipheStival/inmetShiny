@@ -117,7 +117,6 @@ analise.provider.sumario = function(estado) {
     "Dados faltantes ponto de orvalho minimo" ,
     "Dados faltantes ponto de orvalho maximo" ,
     "Dados faltantes chuva"
-    
   )
   
   # Removendo nomes linhas

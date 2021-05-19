@@ -24,6 +24,13 @@ analiseServer = function(input, output, session) {
   ),
   rownames = FALSE)
   
+  # Dados grafico heatmap
+  dadosHeatMap = reactive({
+    dados = graficos.provider.dadosPerdidos(input$estadoInput,
+                                            input$periodoInput[1],
+                                            input$periodoInput[2])
+  })
+  
   # Download sumario
   output$DownloadSumario = downloadHandler(
     filename = function() {
@@ -33,4 +40,9 @@ analiseServer = function(input, output, session) {
       write.csv(dadosAnalise(), file, row.names = FALSE)
     }
   )
+  
+  # Grafico dados perdidos
+  output$dadosPerdidosPlot = renderPlot({
+    analise.chart.dadosPerdidos(dadosHeatMap()) 
+  })
 }

@@ -1,25 +1,46 @@
 #==================================================================
-# Tabela UI
+# Analise tabela UI
 #==================================================================
-createAnaliseUI = function() {
-  #criando janela
-  tabItem(tabName = "analiseUI",
-          tabBox(width = "100%",
-                 tabPanel(
-                   "Analise",
-                   withSpinner(dataTableOutput("tabelaSumario")),
-                   downloadButton("DownloadSumario", label = "Download")
-                         )
-                 )
+analiseUI = function() {
+  tabItem(tabName = "tabelaAnalise",
+          box(
+            width = 12,
+            withSpinner(dataTableOutput("tabelaSumario",width = "100%",height = "80vh")),
+            downloadButton("DownloadSumario", label = "Download")
           )
+  )
+}
+
+#==================================================================
+# dados perdidos UI
+#==================================================================
+dadosperdidosUI = function() {
+  tabItem(tabName = "dadosPerdidosUI",
+          box(
+            width = 12,
+            withSpinner(plotOutput("dadosPerdidosPlot",width = "100%",height = "80vh"))
+          )
+  )
 }
 
 #==================================================================
 # Tabela menu item
 #==================================================================
 itemMenuAnalise = function() {
-  menuItem(text = "Analise",
-           tabName = "analiseUI",
-           icon = icon("search"))
-  
+  #criando janela
+  menuItem(
+    text = "Analise",
+    tabName = "analiseUI",
+    icon = icon("search"),
+    menuSubItem(
+      text = "Tabela",
+      tabName = "tabelaAnalise",
+      icon = icon("bar-chart")
+    ),
+    menuSubItem(
+      text = "Dados perdidos",
+      tabName = "dadosPerdidosUI",
+      icon = icon("bar-chart")
+    )
+  )
 }

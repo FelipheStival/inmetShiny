@@ -33,11 +33,11 @@ tabela.provider.dados = function(municipio, startDate, endDate) {
     startDate,
     endDate
   )
-  
   dados = banco.provider.executeQuery(statement)
   
   # Selecionando colunas
   dados = dados[, c(-1, -3)]
+  dados$global_radiation = dados$global_radiation / 1000
   
   # Renomeando colunas
   names(dados) = c(
@@ -108,6 +108,7 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
   
   # Selecionando colunas
   dados = dados[, c(-1, -3)]
+  dados$global_radiation = dados$global_radiation / 1000
   
   # Renomeando coluna
   names(dados) = c(
