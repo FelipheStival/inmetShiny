@@ -1,7 +1,7 @@
 APP_NAME = "INMET"
 APP_LANGUAGE = "pt"
 
-DB_HOST = "192.168.144.13"
+DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_DATABASE = "inmet"
 DB_USERNAME = "inmet"

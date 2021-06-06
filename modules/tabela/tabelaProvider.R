@@ -12,8 +12,6 @@ tabela.provider.dados = function(municipio, startDate, endDate) {
 	   inmet_daily_data.measurement_date,
 	   inmet_daily_data.minimum_temperature,
 	   inmet_daily_data.maximum_temperature,
-	   inmet_daily_data.minimum_precipitation,
-	   inmet_daily_data.maximum_precipitation,
 	   inmet_daily_data.minimum_relative_air_humidity,
 	   inmet_daily_data.maximum_relative_air_humidity,
 	   inmet_daily_data.wind_speed, wind_direction,
@@ -41,20 +39,18 @@ tabela.provider.dados = function(municipio, startDate, endDate) {
   
   # Renomeando colunas
   names(dados) = c(
-    "Codigo estacao",
+    "Codigo estação",
     "Data",
-    "Temperatura minima(*C)",
-    "Temperatura maxima(*C)",
-    "Precipitacao minima(mm)",
-    "Precipitacao maxima(mm)",
-    "Umidade minima do ar(%)",
-    'Umidade maxima do ar(%)',
+    "Temperatura mínima do ar(*C)",
+    "Temperatura máxima do ar(*C)",
+    "Umidade Relativa mínima do ar(%)",
+    'Umidade Relativa máxima do ar(%)',
     "Velocidade do vento(m/s)",
-    "Direcao do vento",
-    "Radiacao solar global(MJ/m2)",
-    "Ponto de orvalho minimo",
-    "Ponto de orvalho maximo",
-    "Chuva(mm)"
+    "Direção do vento",
+    "Radiação solar global(MJ/m2)",
+    "Ponto de orvalho mínimo",
+    "Ponto de orvalho máximo",
+    "Precipitação Pluvial(mm)"
   )
   
   return(dados)
@@ -76,9 +72,6 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
 	   inmet_hourly_data.minimum_temperature,
 	   inmet_hourly_data.maximum_temperature,
 	   inmet_hourly_data.instant_temperature,
-	   inmet_hourly_data.minimum_precipitation,
-	   inmet_hourly_data.maximum_precipitation,
-	   inmet_hourly_data.instant_precipitation,
 	   inmet_hourly_data.minimum_relative_air_humidity,
 	   inmet_hourly_data.maximum_relative_air_humidity,
 	   inmet_hourly_data.instant_relative_air_humidity,
@@ -103,7 +96,7 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
     startDate,
     endDate
   )
-
+  
   dados = banco.provider.executeQuery(statement)
   
   # Selecionando colunas
@@ -112,26 +105,23 @@ tabela.provider.dados.horarios = function(municipio, startDate, endDate) {
   
   # Renomeando coluna
   names(dados) = c(
-    "Codigo estacao",
+    "Codigo estação",
     "Data",
-    "Horario",
-    "Temperatura minima(*C)",
-    "Temperatura maxima(*C)",
-    "Temperatura instantanea(*C)",
-    "Precipitacao minima(mm)",
-    "Precipitacao maxima(mm)",
-    "Precipitacao instantanea(mm)",
-    "Umidade minima do ar(%)",
-    "Umidade maxima do ar(%)",
-    "Umidade instantanea do ar(%)",
+    "Horário",
+    "Temperatura mínima do ar(*C)",
+    "Temperatura máxima do ar(*C)",
+    "Temperatura instantânea do ar(*C)",
+    "Umidade Relativa mínima do ar(%)",
+    "Umidade Relativa máxima do ar(%)",
+    "Umidade Relativa instantânea do ar(%)",
     "Velocidade do vento",
-    "Direcao do vento",
-    "Explosao",
-    "Radiacao solar global(MJ/m2)",
-    "Ponto de orvalho minimo",
-    "Ponto de orvalho maximo",
-    "Ponto de orvalho instantaneo ",
-    "chuva"
+    "Direção do vento",
+    "Explosão",
+    "Radiação solar global(MJ/m2)",
+    "Ponto de orvalho mínimo",
+    "Ponto de orvalho máximo",
+    "Ponto de orvalho instantânea ",
+    "Precipitação Pluvial(mm)"
   )
   
   return(dados)

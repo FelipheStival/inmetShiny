@@ -5,7 +5,11 @@
 # @return data.frame com dados dos estados
 #==================================================================
 filtro.provider.obterEstados = function(conexao) {
-  statement = "SELECT name FROM state;"
+  statement = "SELECT DISTINCT state.name
+	FROM public.state
+	JOIN city ON city.state_id = state.id
+	JOIN station ON station.city_id = city.id
+	JOIN inmet_daily_data ON inmet_daily_data.station_id = station.id"
   estados = banco.provider.executeQuery(statement)
   return(estados)
 }
@@ -19,11 +23,11 @@ filtro.provider.obterEstados = function(conexao) {
 #==================================================================
 filtro.provider.obterCidades = function(estado, conexao) {
   statement = sprintf("SELECT DISTINCT city. name as municipio
-	FROM city
-	JOIN state ON city.state_id = state.id
-	JOIN station ON city.id = station.city_id
-	JOIN inmet_daily_data ON inmet_daily_data.station_id = station.id
-	WHERE state.name = '%s'",estado)
+	                     FROM city
+	                     JOIN state ON city.state_id = state.id
+	                     JOIN station ON city.id = station.city_id
+	                     JOIN inmet_daily_data ON inmet_daily_data.station_id = station.id
+	                     WHERE state.name = '%s'",estado)
   cidades = banco.provider.executeQuery(statement)
   return(cidades)
 }

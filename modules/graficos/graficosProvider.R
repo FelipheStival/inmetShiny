@@ -33,7 +33,13 @@ graficos.provider.dados = function(municipio, startDate, endDate) {
     startDate,
     endDate
   )
+  
   dados = banco.provider.executeQuery(statement)
+  
+  # Corrigindo radiacao global
+  dados$global_radiation = round(dados$global_radiation / 1000,2)
+  
+  # Renomeando coluna data
   colnames(dados)[3] = "data"
   return(dados)
 }
@@ -46,29 +52,29 @@ graficos.provider.dados = function(municipio, startDate, endDate) {
 #==================================================================
 graficos.provider.dadosPerdidos = function(estado, inicio, fim) {
   # Executando query
-  statement = sprintf(
-    "SELECT
-	   city.name as nome_cidade,
-	   inmet_daily_data.minimum_temperature,
-	   inmet_daily_data.maximum_temperature,
-	   inmet_daily_data.minimum_relative_air_humidity,
-	   inmet_daily_data.maximum_relative_air_humidity,
-	   inmet_daily_data.wind_speed, 
-	   inmet_daily_data.global_radiation,
-	   inmet_daily_data.rain
-	FROM inmet_daily_data
-	JOIN station ON inmet_daily_data.station_id = station.id
-	JOIN city ON station.city_id = city.id
-	JOIN state ON city.state_id = state.id
-	WHERE state.name = '%s'
-	AND
-	inmet_daily_data.measurement_date >= '%s'
-	AND
-	inmet_daily_data.measurement_date <= '%s'",
-    estado,
-    inicio,
-    fim
-  )
+    statement = sprintf(
+      "SELECT
+    	   city.name as nome_cidade,
+    	   inmet_daily_data.minimum_temperature,
+    	   inmet_daily_data.maximum_temperature,
+    	   inmet_daily_data.minimum_relative_air_humidity,
+    	   inmet_daily_data.maximum_relative_air_humidity,
+    	   inmet_daily_data.wind_speed, 
+    	   inmet_daily_data.global_radiation,
+    	   inmet_daily_data.rain
+  	     FROM inmet_daily_data
+  	     JOIN station ON inmet_daily_data.station_id = station.id
+  	     JOIN city ON station.city_id = city.id
+  	     JOIN state ON city.state_id = state.id
+  	     WHERE state.name = '%s'
+  	     AND
+  	     inmet_daily_data.measurement_date >= '%s'
+  	     AND
+  	     inmet_daily_data.measurement_date <= '%s'",
+         estado,
+         inicio,
+         fim
+    ) 
   
   dados = banco.provider.executeQuery(statement)
   dados$nome_cidade = paste(dados$nome_cidade,estado,sep = "-")
@@ -148,25 +154,25 @@ graficos.provider.grafico.legenda = function(variavelSelect) {
   switch (
     variavelSelect,
     "minimum_temperature" = {
-      legenda = "Temperatura minima(*C)"
+      legenda = "Temperatura mínima do ar(*C)"
     },
     "maximum_temperature" = {
-      legenda = "Temperatura maxima(*C)"
+      legenda = "Temperatura máxima do ar(*C)"
     },
     "minimum_relative_air_humidity" = {
-      legenda = "Umidade minima do ar(%)"
+      legenda = "Umidade Relativa mínima do ar(%)"
     },
     "maximum_relative_air_humidity" = {
-      legenda = "Umidade maxima do ar(%)"
+      legenda = "Umidade Relativa máxima do ar(%)"
     },
     "wind_speed" = {
       legenda =  "Velocidade do Vento(%)"
     },
     "global_radiation" = {
-      legenda = "Radiacao solar global(MJ/m2)"
+      legenda = "Radiação solar global(MJ/m2)"
     },
     "rain" = {
-      legenda = "Precipitacao(mm)"
+      legenda = "Precipitação Pluvial(mm)"
     }
   )
   return(legenda)

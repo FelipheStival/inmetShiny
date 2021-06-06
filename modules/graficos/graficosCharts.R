@@ -70,7 +70,7 @@ grafico.precipitacao = function(dados, Municipio, Grupodias, Coluna)
   plot(s.n,
        start = 1,
        main = titulo,
-       ylab = "Precipitacao pluvial (mm/dia)")
+       ylab = "Precipitação pluvial (mm/dia)")
   
 }
 
@@ -123,7 +123,6 @@ grafico.boxplot = function(tabela,
 #======================================================================
 grafico.precipitacaoAcumulada = function(tabela, Municipio, Coluna)
 {
-  
   tabela[[Coluna]] = as.numeric(tabela[[Coluna]])
   
   tabela$data = as.Date(tabela$data)
@@ -153,7 +152,7 @@ grafico.precipitacaoAcumulada = function(tabela, Municipio, Coluna)
        dat.dep,
        type = "l",
        main = titulo,
-       ylab = "Precipitacao cumulativa (mm)")
+       ylab = "Precipitação cumulativa (mm)")
   
 }
 
@@ -256,7 +255,7 @@ graficos.periodoClimatico = function(dados, Municipio, Coluna) {
     scale_fill_manual(breaks = breaks,
                       labels = labels,
                       values = col) +
-    labs(title = titulo, x = "Mes", y = "Anomalia da precipitacao pluvial media acumulada por dia (mm)") + theme_bw() +
+    labs(title = titulo, x = "Mes", y = "Anomalia da precipitação pluvial media acumulada por dia (mm)") + theme_bw() +
     scale_x_discrete(
       labels = c(
         "Janeiro",
@@ -300,6 +299,8 @@ grafico.GraficoAnomalia = function(cidade,
     select(DATE,RR) %>% 
     rename(date = DATE, pr = RR)
   
+  dados = dados[!is.na(dados$pr),]
+  
   dados <- mutate(dados, mo = month(date, label = TRUE), yr = year(date)) %>% 
     filter(date >= min(dados$date)) %>% 
     group_by(yr, mo) %>% 
@@ -314,7 +315,7 @@ grafico.GraficoAnomalia = function(cidade,
   dados <- mutate(dados, anom = (prs*100/pr_ref)-100,  date = str_c(yr, as.numeric(mo), 1, sep = "-") %>% 
                     ymd(),sign= ifelse(anom > 0, "pos", "neg"))
   
-  Meses = c('set','out','nov','dez','jan','fev','mar','mai')
+  Meses = c('Set','Out','Nov','Dez','Jan','Fev','Mar','Mai')
   
   dados = dados %>% mutate(filtro = format(date,'%m')) %>%
     filter(mo %in% Meses)
@@ -323,18 +324,18 @@ grafico.GraficoAnomalia = function(cidade,
   ano = str_split(ano,"-")[[1]]
   Filter_ano_um = dados %>%
     filter(yr == ano[1],
-           mo == "set" |
-             mo == "out" |
-             mo == "nov" |
-             mo == "dez"
+           mo == "Set" |
+             mo == "Out" |
+             mo == "Nov" |
+             mo == "Dez"
     )
   
   Filter_ano_dois = dados %>%
     filter(yr == ano[2],
-           mo == "jan" |
-             mo == "fev" |
-             mo == "mar" |
-             mo == "mai"
+           mo == "Jan" |
+             mo == "Fev" |
+             mo == "Mar" |
+             mo == "Mai"
     )
   
   Filter_rbind = rbind(Filter_ano_um,Filter_ano_dois)
@@ -439,12 +440,12 @@ grafico.anomalia.temperatura = function(data_inv, municipio) {
   
   
   g1 = g1 + scale_x_continuous(
-    "Anomalia da precipitacao em %",
+    "Anomalia da precipitação em %",
     breaks = seq(-100, 250, 10) * -1,
     labels = seq(-100, 250, 10),
     limits = c(min(data_inv_p$pr_anom), 100)
   ) +
-    scale_y_continuous("Anomalia da temperatura media em C",
+    scale_y_continuous("Anomalia da temperatura média em C",
                        breaks = seq(-2, 2, 0.5)) +
     scale_fill_manual(values = c("black", "white")) +
     scale_colour_manual(values = rev(c("black", "white"))) +

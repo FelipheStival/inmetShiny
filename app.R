@@ -40,7 +40,7 @@ app.loadLabels = function(){
     "Username:" = "Usu\u00e1rio :",
     "Password:" = "Senha :",
     "Login" = "Conectar",
-    "Username or password are incorrect" = "Usu\u00e1rio ou senha incorreto",
+    "Username or password are incorrect" = "Usu\u00e1rio ou senha incembrorreto",
     "Your account has expired" = "Sua conta expirou",
     "Please change your password" = "Por favor, mude sua senha",
     "New password:" = "Nova senha :",
@@ -109,7 +109,7 @@ app.LoadModules = function() {
                          full.names = T)
     index = which(modulos %in% "./app.R")
     modulos = modulos[-index]
-    log = sapply(modulos,source)
+    log = sapply(modulos,source,encoding="utf-8")
 }
 #==============================================#
 

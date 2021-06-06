@@ -3,10 +3,14 @@
 #==================================================================
 analiseUI = function() {
   tabItem(tabName = "tabelaAnalise",
-          box(
-            width = 12,
-            withSpinner(dataTableOutput("tabelaSumario",width = "100%",height = "80vh")),
-            downloadButton("DownloadSumario", label = "Download")
+          tabBox(
+            width = "100%",
+            selected = "Tabela sumario",
+            tabPanel(
+              "Tabela sumario",
+              withSpinner(dataTableOutput("tabelaSumario",width = "100%",height = "80vh")),
+              downloadButton("DownloadSumario", label = "Download")
+            )
           )
   )
 }
@@ -18,7 +22,7 @@ dadosperdidosUI = function() {
   tabItem(tabName = "dadosPerdidosUI",
           box(
             width = 12,
-            withSpinner(plotOutput("dadosPerdidosPlot",width = "100%",height = "80vh"))
+            withSpinner(plotOutput("dadosPerdidosPlot",width = "100%",height = "85vh"))
           )
   )
 }

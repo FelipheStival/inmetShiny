@@ -3,22 +3,22 @@
 #==================================================================
 itemFiltroUI = function() {
   menuItem(
-    text = "Selecione a estacao",
+    text = "Selecione a estação",
     icon = icon("street-view"),
     selectInput(
       inputId = "estadoInput",
       label = "Selecione o estado:",
-      choices = "GO"
+      choices = "SC"
     ),
     selectInput(
       inputId = "cidadeInput",
       label = "Selecione a cidade: ",
-      choices = NULL
+      choices = "Indaial"
     ),
     dateRangeInput(
       inputId = "periodoInput",
-      label = "Selecione o periodo:",
-      start = '2021-02-11',
+      label = "Selecione o período:",
+      start = '2000-02-11',
       end = '2021-02-15'
     )
   )

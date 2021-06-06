@@ -10,12 +10,12 @@ createMapaMatrizUI = function() {
               inputId = "variavelSelect",
               label = "Selecione a variavel:",
               choices = c(
-                "Precipitacao(mm)" = "rain",
-                "Temperatura maxima(*C)" = "maximum_temperature",
-                "Temperatura minima(*C)" = "minimum_temperature",
-                "Radiacao solar global(MJ/m2)" = "global_radiation",
-                "Umidade minima(%)" = "minimum_relative_air_humidity",
-                "Umidade maxima(%)" = "maximum_relative_air_humidity",
+                "Precipitação Pluvial(mm)" = "rain",
+                "Temperatura máxima do ar(*C)" = "maximum_temperature",
+                "Temperatura mínima do ar(*C)" = "minimum_temperature",
+                "Radiação solar global(MJ/m2)" = "global_radiation",
+                "Umidade Relativa mínima do ar(%)" = "minimum_relative_air_humidity",
+                "Umidade Relativa máxima do ar(%)" = "maximum_relative_air_humidity",
                 "Velocidade do vento(%)" = "wind_speed"
               )
             ),
@@ -161,13 +161,13 @@ createGraficoBasicoUI = function() {
               inputId = "boxplotVariavel",
               label = "Selecione a variavel:",
               choices = c(
-                "Temperatura minima(*C)" = "minimum_temperature",
-                "Temperatura maxima(*C)" = "maximum_temperature",
-                "Umidade minima do ar(%)" = "minimum_relative_air_humidity",
-                "Umidade maxima do ar(%)" = "maximum_relative_air_humidity",
+                "Temperatura mínima do ar(*C)" = "minimum_temperature",
+                "Temperatura máxima do ar(*C)" = "maximum_temperature",
+                "Umidade Relativa mínima do ar(%)" = "minimum_relative_air_humidity",
+                "Umidade Relativa máxima do ar(%)" = "maximum_relative_air_humidity",
                 "Velocidade do Vento(%)" = "wind_speed",
-                "Radiacao solar global(MJ/m2)" = "global_radiation",
-                "Precipitacao(mm)" = "rain"
+                "Radiação solar global(MJ/m2)" = "global_radiation",
+                "Precipitação Pluvial(mm)" = "rain"
               )
             ),
             selectInput(
@@ -195,11 +195,11 @@ createGraficoBasicoUI = function() {
 #==================================================================
 itemMenuGraficos = function() {
   menuItem(
-    text = "Graficos",
+    text = "Gráficos",
     tabName = "analiseUI",
     icon = icon("line-chart"),
     menuSubItem(
-      text = "Grafico basico",
+      text = "Gráfico básico",
       tabName = "graficosPerdidosPlot",
       icon = icon("bar-chart")
     ),
@@ -209,22 +209,22 @@ itemMenuGraficos = function() {
       icon = icon("bar-chart")
     ),
     menuSubItem(
-      text = "Precipitacao",
+      text = "Precipitação",
       tabName = "Precipitacaoplot",
       icon = icon("bar-chart")
     ),
     menuSubItem(
-      text = "Anomalia Precipitacao",
+      text = "Anomalia Precipitação",
       tabName = "AnomaliaPrecipitacaoplot",
       icon = icon("bar-chart")
     ),
     menuSubItem(
-      text = "Anomalia Temperatura Precipitacao",
+      text = "Anomalia Temperatura Precipitação",
       tabName = "AnomaliaTemperaturaPlot",
       icon = icon("bar-chart")
     ),
     menuSubItem(
-      text = "Precipitacao cumulativa",
+      text = "Precipitação cumulativa",
       tabName = "PrecipitacaoCumulativa",
       icon = icon("bar-chart")
     ),

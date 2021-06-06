@@ -29,7 +29,7 @@ filtroServer = function(input, output, session) {
           inputId = "cidadeInput",
           choices = cidades$municipio,
           selected = cidades$municipio[1]
-        ) 
+        )
       }
     }
   })
@@ -50,4 +50,5 @@ filtroServer = function(input, output, session) {
       }
     }
   })
+  
 }
